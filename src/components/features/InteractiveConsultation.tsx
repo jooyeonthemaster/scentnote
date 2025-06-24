@@ -15,7 +15,7 @@ interface InteractiveConsultationProps {
 
 export function InteractiveConsultation({ onStartChat }: InteractiveConsultationProps) {
   const { messages, isLoading, sendMessage, conversationState, recommendations } = useChatStore();
-  const { addLog } = useAnalysisStore();
+  const { addLog, forceCompleteProgress } = useAnalysisStore();
   const [inputValue, setInputValue] = useState('');
   const [isStarting, setIsStarting] = useState(false);
 
@@ -80,6 +80,13 @@ export function InteractiveConsultation({ onStartChat }: InteractiveConsultation
   // 추천 결과 표시 여부 확인
   const shouldShowRecommendations = recommendations && conversationState.stage === 'recommendation_ready';
 
+  // 추천이 준비되면 진행률을 100%로 설정
+  useEffect(() => {
+    if (shouldShowRecommendations) {
+      forceCompleteProgress();
+    }
+  }, [shouldShowRecommendations, forceCompleteProgress]);
+
   return (
     <div className="relative max-w-6xl mx-auto mb-16">
       {/* AI 질문 섹션 - 여백 줄임 */}
@@ -105,13 +112,13 @@ export function InteractiveConsultation({ onStartChat }: InteractiveConsultation
             <div className="text-center mb-4">
               <p className="text-sm text-mono-500">💡 이런 식으로 답변해보세요</p>
             </div>
-            <div className="flex flex-wrap justify-center gap-3 mb-6">
+            <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-6 px-4">
               {exampleAnswers.length > 0 ? (
                 exampleAnswers.map((example, index) => (
                   <div 
                     key={index}
                     onClick={() => setInputValue(example)}
-                    className="bg-white/5 border border-gray-600/20 rounded-full px-4 py-2 text-sm text-mono-600 hover:bg-white/10 hover:text-mono-700 cursor-pointer transition-all duration-200"
+                    className="bg-white/5 border border-gray-600/20 rounded-full px-3 md:px-4 py-2 md:py-2 py-3 text-xs md:text-sm text-mono-600 hover:bg-white/10 hover:text-mono-700 cursor-pointer transition-all duration-200 text-center"
                   >
                     "{example}"
                   </div>
@@ -120,13 +127,13 @@ export function InteractiveConsultation({ onStartChat }: InteractiveConsultation
                 <>
                   <div 
                     onClick={() => setInputValue('샤넬 블루 드 샤넬, 톰포드 네롤리 포르토피노')}
-                    className="bg-white/5 border border-gray-600/20 rounded-full px-4 py-2 text-sm text-mono-600 hover:bg-white/10 hover:text-mono-700 cursor-pointer transition-all duration-200"
+                    className="bg-white/5 border border-gray-600/20 rounded-full px-3 md:px-4 py-2 md:py-2 py-3 text-xs md:text-sm text-mono-600 hover:bg-white/10 hover:text-mono-700 cursor-pointer transition-all duration-200 text-center"
                   >
                     "샤넬 블루 드 샤넬, 톰포드 네롤리 포르토피노"
                   </div>
                   <div 
                     onClick={() => setInputValue('디올 소바쥬, 구찌 블룸')}
-                    className="bg-white/5 border border-gray-600/20 rounded-full px-4 py-2 text-sm text-mono-600 hover:bg-white/10 hover:text-mono-700 cursor-pointer transition-all duration-200"
+                    className="bg-white/5 border border-gray-600/20 rounded-full px-3 md:px-4 py-2 md:py-2 py-3 text-xs md:text-sm text-mono-600 hover:bg-white/10 hover:text-mono-700 cursor-pointer transition-all duration-200 text-center"
                   >
                     "디올 소바쥬, 구찌 블룸"
                   </div>
@@ -139,67 +146,49 @@ export function InteractiveConsultation({ onStartChat }: InteractiveConsultation
 
       {/* 입력 폼 - recommendation_ready 단계에서는 숨김 */}
       {conversationState.stage !== 'recommendation_ready' && (
-        <div className="max-w-4xl mx-auto mb-8">
-          <form onSubmit={handleSubmit} className="flex gap-3">
+        <div className="max-w-4xl mx-auto mb-8 px-4">
+          <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-3">
             <div className="flex-1 relative">
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder={isLoading ? "AI가 분석 중입니다..." : "답변을 입력해주세요..."}
-                className="w-full px-6 py-4 bg-white/10 border border-gray-600/30 rounded-lg text-mono-900 placeholder-mono-500 focus:outline-none focus:ring-2 focus:ring-mono-700 focus:border-transparent backdrop-blur-sm"
+                placeholder={isLoading ? "정밀 취향 분석 중입니다... 잠시만 기다려 주세요" : "답변을 입력해주세요..."}
+                className="w-full px-6 py-4 md:py-4 py-6 pr-16 md:pr-6 bg-white/10 border border-gray-600/30 rounded-lg text-mono-900 placeholder-mono-500 focus:outline-none focus:ring-2 focus:ring-mono-700 focus:border-transparent backdrop-blur-sm text-base"
                 disabled={isLoading}
               />
               
-              {/* 왼쪽에서 오른쪽으로 채워지는 물결 로딩 애니메이션 */}
+              {/* 모바일용 입력창 내부 전송 버튼 */}
+              <button
+                type="submit"
+                disabled={isLoading || !inputValue.trim()}
+                className="md:hidden absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-mono-700 hover:bg-mono-800 disabled:bg-gray-400 rounded-full flex items-center justify-center transition-colors duration-200"
+              >
+                {isLoading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                ) : (
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                )}
+              </button>
+              
+              {/* 두꺼운 막대 로딩바 */}
               {isLoading && (
-                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
-                  <div 
-                    className="h-full bg-mono-800/20 animate-wave-fill"
-                    style={{
-                      background: `linear-gradient(90deg, 
-                        transparent 0%, 
-                        rgba(0,0,0,0.1) 25%, 
-                        rgba(0,0,0,0.15) 50%, 
-                        rgba(0,0,0,0.1) 75%, 
-                        transparent 100%
-                      )`,
-                      clipPath: `polygon(
-                        0% 100%, 
-                        5% 85%, 
-                        10% 90%, 
-                        15% 75%, 
-                        20% 80%, 
-                        25% 70%, 
-                        30% 75%, 
-                        35% 65%, 
-                        40% 70%, 
-                        45% 60%, 
-                        50% 65%, 
-                        55% 55%, 
-                        60% 60%, 
-                        65% 50%, 
-                        70% 55%, 
-                        75% 45%, 
-                        80% 50%, 
-                        85% 40%, 
-                        90% 45%, 
-                        95% 35%, 
-                        100% 40%, 
-                        100% 100%
-                      )`
-                    }}
-                  />
+                <div className="absolute bottom-0 left-0 right-0 h-4 bg-gray-200/30 rounded-b-lg overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-mono-700 to-mono-900 animate-loading-bar"></div>
                 </div>
               )}
             </div>
+            
+            {/* 데스크톱용 전송 버튼 */}
             <Button
               type="submit"
               disabled={isLoading || !inputValue.trim()}
-              className="px-8 py-4"
+              className="hidden md:flex px-8 py-4 text-base font-medium"
             >
               {isLoading ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   분석중
                 </div>
@@ -216,7 +205,7 @@ export function InteractiveConsultation({ onStartChat }: InteractiveConsultation
                   <div className="w-2 h-2 bg-mono-500 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
                   <div className="w-2 h-2 bg-mono-500 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
                 </div>
-                AI가 향수 데이터베이스를 분석하고 있습니다...
+                정밀한 취향 분석 중입니다. 페이지를 벗어나지 마세요!
               </div>
             </div>
           )}

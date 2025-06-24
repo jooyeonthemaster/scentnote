@@ -95,9 +95,14 @@ export default function ChatPage() {
                   <div className="w-10 h-10 bg-lab-black rounded-full flex items-center justify-center">
                     <Bot className="w-5 h-5 text-lab-white" />
                   </div>
-                  AI 향수 전문가와 대화 중...
+                  정밀 취향 분석 중... 잠시만 기다려 주세요
                   {isLoading && (
-                    <div className="w-4 h-4 border-2 border-lab-black/30 border-t-lab-black rounded-full animate-spin"></div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-lab-black/30 border-t-lab-black rounded-full animate-spin"></div>
+                      <div className="w-20 bg-lab-gray-200 rounded-full h-2">
+                        <div className="bg-lab-black h-2 rounded-full animate-loading-bar"></div>
+                      </div>
+                    </div>
                   )}
                 </CardTitle>
               </CardHeader>
@@ -148,20 +153,37 @@ export default function ChatPage() {
                 
                 {/* 입력 영역 */}
                 <div className="border-t border-lab-gray-300 p-4">
-                  <div className="flex gap-3">
-                    <Input
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="메시지를 입력하세요..."
-                      disabled={isLoading}
-                      className="flex-1 font-mono"
-                    />
+                  <div className="flex flex-col md:flex-row gap-3">
+                    <div className="flex-1 relative">
+                      <Input
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="메시지를 입력하세요..."
+                        disabled={isLoading}
+                        className="w-full font-mono py-4 text-base pr-16 md:pr-4"
+                      />
+                      
+                      {/* 모바일용 입력창 내부 전송 버튼 */}
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={!input.trim() || isLoading}
+                        className="md:hidden absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-lab-black hover:bg-lab-gray-800 disabled:bg-gray-400 rounded-full flex items-center justify-center transition-colors duration-200"
+                      >
+                        {isLoading ? (
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        ) : (
+                          <Send className="w-5 h-5 text-white" />
+                        )}
+                      </button>
+                    </div>
+                    
+                    {/* 데스크톱용 전송 버튼 */}
                     <Button
                       onClick={handleSendMessage}
                       disabled={!input.trim() || isLoading}
                       variant="primary"
-                      className="bg-lab-black hover:bg-lab-gray-800"
+                      className="hidden md:flex bg-lab-black hover:bg-lab-gray-800 py-4 text-base font-medium"
                     >
                       <Send className="w-4 h-4" />
                     </Button>

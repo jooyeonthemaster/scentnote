@@ -10,6 +10,7 @@ interface AnalysisStore {
   // 액션
   addLog: (category: LogCategory, title: string, content: string, progressContribution?: number) => void;
   updateProgress: () => void;
+  forceCompleteProgress: () => void;
   openDetailModal: (category: LogCategory) => void;
   closeDetailModal: () => void;
   resetAnalysis: () => void;
@@ -84,6 +85,17 @@ export const useAnalysisStore = create<AnalysisStore>((set, get) => ({
         preference: preferenceProgress,
         profile: profileProgress,
         considerations: considerationsProgress
+      }
+    });
+  },
+  
+  forceCompleteProgress: () => {
+    set({
+      progress: {
+        overall: 100,
+        preference: 100,
+        profile: 100,
+        considerations: 100
       }
     });
   },

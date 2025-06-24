@@ -82,6 +82,7 @@ module.exports = {
         'fade-subtle': 'fadeSubtle 2s ease-in-out infinite alternate',
         'wave': 'wave 1.2s ease-in-out infinite',
         'wave-fill': 'wave-fill 3s ease-in-out infinite',
+        'loading-bar': 'loading-bar 2s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -136,6 +137,14 @@ module.exports = {
           '100%': { 
             width: '100%',
             transform: 'translateX(0%)'
+          },
+        },
+        'loading-bar': {
+          '0%': { 
+            width: '0%'
+          },
+          '100%': { 
+            width: '100%'
           },
         },
       },

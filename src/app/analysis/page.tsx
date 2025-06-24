@@ -7,6 +7,8 @@ import { useFragranceStore } from '@/store/useFragranceStore';
 import { fragrances } from '@/data/fragrances';
 // API Routes를 통해 Gemini 함수 호출
 import { FragranceAnalysis, FragranceRecommendation } from '@/types';
+import { FragranceFacts } from '@/components/features/FragranceFacts';
+import { useAnalysisStore } from '@/store/useAnalysisStore';
 
 export default function AnalysisPage() {
   const { 
@@ -18,6 +20,8 @@ export default function AnalysisPage() {
     updateJourneyStep,
     completeJourney
   } = useFragranceStore();
+  
+  const { forceCompleteProgress } = useAnalysisStore();
   
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisStep, setAnalysisStep] = useState<'analyzing' | 'generating' | 'complete'>('analyzing');
@@ -38,11 +42,24 @@ export default function AnalysisPage() {
   useEffect(() => {
     if (!analysis && selectedFragrances.length > 0) {
       startAnalysis();
-    } else {
+    } else if (analysis) {
       setCurrentAnalysis(analysis);
-      setAnalysisStep('complete');
+      // 이미 분석이 완료되어 있어도 사용자가 흥미로운 향수 이야기를 볼 수 있도록 
+      // analyzing → generating → complete 순서로 진행
+      setAnalysisStep('analyzing');
+      
+      // 첫 번째 단계: analyzing (4초)
+      setTimeout(() => {
+        setAnalysisStep('generating');
+        
+        // 두 번째 단계: generating (6초)
+        setTimeout(() => {
+          setAnalysisStep('complete');
+          forceCompleteProgress();
+        }, 6000);
+      }, 4000);
     }
-  }, []);
+  }, [forceCompleteProgress]);
 
   const startAnalysis = async () => {
     setIsAnalyzing(true);
@@ -92,16 +109,33 @@ export default function AnalysisPage() {
       setCurrentAnalysis(completeAnalysis);
       setAnalysis(completeAnalysis);
       setAnalysisStep('generating');
+      
+      // 사용자가 흥미로운 향수 이야기를 볼 수 있도록 최소 6초 대기
+      await new Promise(resolve => setTimeout(resolve, 6000));
 
-      // 2단계: 추천 생성 (API Route 호출)
+      // 2단계: 추천 생성 (API Route 호출) - 올바른 userProfile 형식으로 전송
+      const userProfile = {
+        preferredNotes: analysisResult.preferredNotes?.map((note: any) => note.name || note).join(', ') || '',
+        avoidedNotes: analysisResult.avoidedNotes?.map((note: any) => note.name || note).join(', ') || '',
+        preferredBrands: analysisResult.preferredBrands?.map((brand: any) => brand.name || brand) || [],
+        style: analysisResult.personalityProfile?.style || 'modern',
+        intensity: analysisResult.personalityProfile?.intensity || 'moderate',
+        complexity: analysisResult.personalityProfile?.complexity || 'complex',
+        budget: analysisResult.personalityProfile?.budget || '5만원',
+        gender: '무관',
+        ageGroup: '20-30대',
+        lifestyle: '일반',
+        occasions: '데일리',
+        experience: '중급'
+      };
+
       const recommendationResponse = await fetch('/api/recommend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          analysis: analysisResult,
-          availableFragrances: fragrances.filter(f => !selectedFragrances.includes(f.id))
+          userProfile
         })
       });
 
@@ -123,7 +157,14 @@ export default function AnalysisPage() {
 
       setCurrentAnalysis(finalAnalysis);
       setAnalysis(finalAnalysis);
+      
+      // 마지막 향수 이야기들을 볼 수 있도록 추가 대기
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      
       setAnalysisStep('complete');
+      
+      // 분석 완료 시 진행률을 100%로 강제 설정
+      forceCompleteProgress();
 
     } catch (error) {
       console.error('AI 분석 중 오류:', error);
@@ -186,24 +227,40 @@ export default function AnalysisPage() {
             
             <p className="lab-text max-w-2xl mx-auto text-lg mb-8">
               {analysisStep === 'analyzing' 
-                ? '당신의 향수 취향을 분석하고 있습니다...'
-                : '맞춤 향수 추천을 생성하고 있습니다...'
+                ? '수천 가지 향수 데이터와 당신의 답변을 정밀 분석 중입니다. 정확한 추천을 위해 시간이 걸리니 페이지를 벗어나지 마세요!'
+                : '당신만을 위한 완벽한 향수를 찾고 있습니다. 곧 놀라운 결과를 확인하실 수 있어요!'
               }
             </p>
           </div>
 
-          {/* 로딩 애니메이션 */}
-          <Card className="max-w-md mx-auto">
-            <CardContent className="p-8 text-center">
-              <div className="animate-spin w-12 h-12 border-4 border-lab-gray-300 border-t-lab-black rounded-full mx-auto mb-4"></div>
-              <p className="lab-text">
-                {analysisStep === 'analyzing' 
-                  ? '선호도 패턴을 분석 중...'
-                  : '최적의 향수를 찾는 중...'
-                }
-              </p>
-            </CardContent>
-          </Card>
+          {/* 흥미진진한 향수 정보와 함께하는 로딩 */}
+          <div className="relative">
+            <FragranceFacts />
+            
+            {/* 하단 로딩 표시 */}
+            <div className="mt-8 max-w-md mx-auto">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="animate-spin w-6 h-6 border-3 border-mono-300 border-t-mono-700 rounded-full"></div>
+                <p className="text-mono-700 font-medium text-center">
+                  {analysisStep === 'analyzing' 
+                    ? '취향을 정밀 분석 중입니다... 페이지를 벗어나지 마세요!'
+                    : '맞춤 향수를 찾고 있습니다... 곧 완료됩니다!'
+                  }
+                </p>
+              </div>
+              
+              {/* 진행률 바 - 실제 진행률 반영 */}
+              <div className="w-full bg-mono-200/50 rounded-full h-4">
+                <div 
+                  className="bg-gradient-to-r from-mono-600 to-mono-800 h-4 rounded-full transition-all duration-1000 ease-out"
+                  style={{ 
+                    width: analysisStep === 'analyzing' ? '45%' : 
+                           analysisStep === 'generating' ? '85%' : '100%' 
+                  }}
+                ></div>
+              </div>
+            </div>
+          </div>
 
           {/* 분석 중인 데이터 표시 */}
           <div className="mt-12 grid md:grid-cols-3 gap-6">
