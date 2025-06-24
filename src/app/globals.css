@@ -2,134 +2,343 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 웹폰트 import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
 @layer base {
   html {
     scroll-behavior: smooth;
   }
   
   body {
-    @apply bg-lab-paper text-lab-black font-mono;
-    background-image: 
-      linear-gradient(to right, #e5e5e5 1px, transparent 1px),
-      linear-gradient(to bottom, #e5e5e5 1px, transparent 1px);
-    background-size: 20px 20px;
+    @apply bg-lab-bg text-mono-900 font-sans antialiased;
+    background-attachment: fixed;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* 스크롤바 스타일링 */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-mono-100;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-mono-600 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-mono-700;
+  }
+
+  /* 선택 텍스트 스타일링 */
+  ::selection {
+    @apply bg-mono-900/20 text-mono-950;
   }
 }
 
 @layer components {
-  .lab-container {
-    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  /* 컨테이너 스타일 */
+  .mono-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
   
-  .lab-page {
-    @apply min-h-screen bg-lab-paper relative;
+  .mono-page {
+    @apply min-h-screen relative overflow-hidden bg-lab-bg;
+    background-attachment: fixed;
   }
-  
-  .lab-heading {
-    @apply font-mono text-2xl md:text-3xl font-bold text-lab-black mb-2;
+
+  /* 모노크롬 글래스 카드 */
+  .mono-card {
+    @apply backdrop-blur-sm bg-glass-white border border-glass-border rounded-2xl shadow-soft;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
-  
-  .lab-subheading {
-    @apply font-mono text-lg md:text-xl font-semibold text-lab-gray-700 mb-4;
+
+  /* 모노크롬 버튼 */
+  .mono-button {
+    @apply relative overflow-hidden rounded-xl px-8 py-4 font-medium text-white transition-all duration-300;
+    @apply bg-gradient-accent hover:shadow-accent hover:scale-105 active:scale-95;
+    background-size: 200% 200%;
   }
-  
-  .lab-text {
-    @apply font-mono text-sm text-lab-gray-600 leading-relaxed;
-  }
-  
-  .lab-label {
-    @apply font-mono text-xs uppercase tracking-wider text-lab-gray-500 mb-2 block;
-  }
-  
-  .lab-divider {
-    @apply border-t border-lab-gray-300 border-dashed my-6;
-  }
-  
-  /* 실험실 노트북 효과 */
-  .lab-notebook {
-    @apply bg-lab-paper relative;
-    background-image: 
-      linear-gradient(to right, #e5e5e5 1px, transparent 1px),
-      linear-gradient(to bottom, #e5e5e5 1px, transparent 1px);
-    background-size: 20px 20px;
-  }
-  
-  .lab-notebook::before {
+
+  .mono-button::before {
     content: '';
-    @apply absolute inset-0 bg-lab-paper/80 pointer-events-none;
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent;
+    transform: translateX(-100%);
+    transition: transform 0.6s;
   }
-  
-  /* 실험실 종이 홀 효과 */
-  .lab-paper-holes {
-    position: relative;
+
+  .mono-button:hover::before {
+    transform: translateX(100%);
   }
-  
-  .lab-paper-holes::before {
-    content: '';
+
+  /* 플로팅 요소 */
+  .floating-element {
+    @apply animate-float;
+  }
+
+  /* 모노크롬 그라데이션 텍스트 */
+  .mono-text {
+    @apply bg-gradient-accent bg-clip-text text-transparent;
+    background-size: 200% 200%;
+  }
+
+  /* 모노크롬 입력 필드 */
+  .mono-input {
+    @apply bg-glass-white backdrop-blur-sm border border-glass-border rounded-xl px-6 py-4;
+    @apply text-mono-900 placeholder-mono-500 focus:outline-none focus:ring-2 focus:ring-mono-600/30;
+    @apply transition-all duration-300;
+    backdrop-filter: blur(10px);
+  }
+
+  /* 모노크롬 카드 */
+  .elegant-card {
+    @apply mono-card p-8 hover:shadow-floating-light transition-all duration-500;
+    @apply hover:scale-105 hover:bg-glass-light;
+  }
+
+  /* 모노크롬 아이콘 */
+  .mono-icon {
+    @apply text-mono-700 drop-shadow-sm;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  /* 배경 패턴 */
+  .clean-bg {
+    background: 
+      linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
+      url('/images/backgrounds/lab-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  .lab-bg {
+    background: 
+      linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+      url('/images/backgrounds/lab-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  .subtle-bg {
+    background: linear-gradient(45deg, #fafafa 0%, #f5f5f5 25%, #ffffff 50%, #fafafa 75%, #f8fafc 100%);
+    background-size: 400% 400%;
+  }
+
+  /* 파티클 효과 (모노크롬 버전) */
+  .particles-mono {
     position: absolute;
-    left: 20px;
     top: 0;
-    bottom: 0;
-    width: 2px;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent,
-      transparent 18px,
-      #ff6b6b 18px,
-      #ff6b6b 22px
-    );
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
   }
-  
-  /* 손글씨 효과 클래스 */
-  .lab-handwriting {
-    font-family: 'Courier New', monospace;
-    transform: rotate(-0.5deg);
-    line-height: 1.8;
+
+  .particle-mono {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 50%;
+    animation: float 8s ease-in-out infinite;
   }
-  
-  /* 실험실 스탬프 효과 */
-  .lab-stamp {
-    @apply border-2 border-lab-black bg-transparent text-lab-black px-3 py-1;
-    @apply font-mono text-xs uppercase tracking-wider;
-    transform: rotate(-2deg);
-    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+
+  .particle-mono:nth-child(1) { width: 2px; height: 2px; left: 10%; animation-delay: 0s; }
+  .particle-mono:nth-child(2) { width: 3px; height: 3px; left: 20%; animation-delay: 1s; }
+  .particle-mono:nth-child(3) { width: 1px; height: 1px; left: 30%; animation-delay: 2s; }
+  .particle-mono:nth-child(4) { width: 2px; height: 2px; left: 40%; animation-delay: 3s; }
+  .particle-mono:nth-child(5) { width: 1px; height: 1px; left: 50%; animation-delay: 4s; }
+  .particle-mono:nth-child(6) { width: 3px; height: 3px; left: 60%; animation-delay: 5s; }
+  .particle-mono:nth-child(7) { width: 1px; height: 1px; left: 70%; animation-delay: 6s; }
+  .particle-mono:nth-child(8) { width: 2px; height: 2px; left: 80%; animation-delay: 7s; }
+  .particle-mono:nth-child(9) { width: 1px; height: 1px; left: 90%; animation-delay: 8s; }
+
+  /* 모션 그래픽 (모노크롬 버전) */
+  .motion-graphic-mono {
+    @apply absolute inset-0 pointer-events-none;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  }
+
+  /* 텍스트 효과 */
+  .mono-heading {
+    @apply font-display font-bold text-5xl md:text-7xl mono-text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .mono-subheading {
+    @apply font-display font-semibold text-2xl md:text-3xl text-mono-700;
+  }
+
+  .mono-body {
+    @apply font-sans text-mono-600 leading-relaxed;
+  }
+
+  /* 인터랙티브 요소 */
+  .interactive-card {
+    @apply elegant-card cursor-pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .interactive-card:hover {
+    @apply shadow-mono;
+    transform: translateY(-4px) scale(1.02);
+  }
+
+  /* 로딩 애니메이션 */
+  .loading-spinner {
+    @apply w-8 h-8 border-4 border-mono-200 border-t-mono-700 rounded-full animate-spin;
+  }
+
+  /* 스테이지 인디케이터 */
+  .stage-indicator {
+    @apply relative flex items-center gap-4;
+  }
+
+  .stage-indicator::before {
+    content: '';
+    @apply absolute top-1/2 left-0 w-full h-0.5 bg-gradient-accent;
+    transform: translateY(-50%);
+    z-index: 0;
+  }
+
+  .stage-dot {
+    @apply relative z-10 w-4 h-4 rounded-full bg-gradient-accent shadow-soft transition-all duration-300;
+  }
+
+  .stage-dot.active {
+    @apply scale-125 shadow-accent;
+  }
+
+  /* 모노크롬 그리드 배경 */
+  .mono-grid {
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* 모노크롬 섹션 */
+  .mono-section {
+    @apply py-20 relative;
+  }
+
+  .mono-section::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-b from-transparent via-white/30 to-transparent pointer-events-none;
+  }
+
+  /* 모노크롬 배지 */
+  .mono-badge {
+    @apply inline-flex items-center px-4 py-2 rounded-full text-sm font-medium;
+    @apply bg-white/80 text-mono-800 border border-mono-900/20 backdrop-blur-sm;
+  }
+
+  /* 모노크롬 알림 */
+  .mono-notification {
+    @apply mono-card p-4 border-l-4 border-mono-700;
+    @apply bg-gradient-to-r from-mono-900/5 to-transparent;
+  }
+
+  /* 엘레강스 효과 */
+  .elegant-hover {
+    @apply transition-all duration-300 hover:shadow-elegant hover:-translate-y-1;
+  }
+
+  /* 서브틀 애니메이션 */
+  .subtle-float {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  /* 미니멀 디바이더 */
+  .minimal-divider {
+    @apply w-full h-px bg-gradient-to-r from-transparent via-mono-300 to-transparent;
+  }
+
+  /* 소프트 포커스 */
+  .soft-focus {
+    @apply ring-1 ring-mono-200 focus:ring-2 focus:ring-mono-400 focus:ring-opacity-50;
   }
 }
 
 @layer utilities {
+  /* 유틸리티 클래스들 */
   .text-balance {
     text-wrap: balance;
   }
-  
-  /* 그리드 배경 유틸리티 */
-  .bg-grid {
-    background-image: 
-      linear-gradient(to right, #e5e5e5 1px, transparent 1px),
-      linear-gradient(to bottom, #e5e5e5 1px, transparent 1px);
-    background-size: 20px 20px;
+
+  .perspective-1000 {
+    perspective: 1000px;
   }
-  
-  /* 실험실 텍스처 */
-  .bg-lab-texture {
-    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f0f0f0' fill-opacity='0.1'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3C/g%3E%3C/svg%3E");
+
+  .preserve-3d {
+    transform-style: preserve-3d;
   }
-  
-  /* 페이드 애니메이션 */
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+
+  .backface-hidden {
+    backface-visibility: hidden;
   }
-  
-  .animate-slide-up {
-    animation: slideUp 0.3s ease-out;
+
+  /* 반응형 텍스트 크기 */
+  .text-responsive-xl {
+    @apply text-xl md:text-2xl lg:text-3xl;
   }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+
+  .text-responsive-2xl {
+    @apply text-2xl md:text-3xl lg:text-4xl;
   }
-  
-  @keyframes slideUp {
-    from { transform: translateY(10px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+
+  .text-responsive-3xl {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  /* 그리드 유틸리티 */
+  .grid-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .grid-auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  /* 모노크롬 전용 유틸리티 */
+  .mono-shadow {
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  .mono-glow {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .elegant-paper {
+    background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
+  }
+
+  /* 모노크롬 그라데이션 */
+  .gradient-mono-text {
+    background: linear-gradient(135deg, #262626 0%, #525252 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* 서브틀 보더 */
+  .subtle-border {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  /* 엘레강트 라운드 */
+  .elegant-rounded {
+    border-radius: 1.5rem;
   }
 } 

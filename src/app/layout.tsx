@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className="h-full">
-      <body className="h-full lab-notebook">
+      <body className="h-full lab-notebook" suppressHydrationWarning>
         <div className="min-h-full bg-lab-paper relative">
           <div className="absolute inset-0 bg-lab-paper/90 pointer-events-none" />
           <div className="relative z-10">

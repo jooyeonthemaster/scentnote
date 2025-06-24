@@ -3,5 +3,4 @@ description:
 globs: 
 alwaysApply: true
 ---
-환경변수 관련해서는 너가 env.txt 파일을 만들면 내가 거기에 있는 모든 내용을 직접 .env.local 파일에 붙여넣을거야. 지금 프로젝트 구조는 완전 비어있으니 너가 개발 환경 세팅해. 
-
+환경변수 관련해서는 너가 env.txt 파일을 만들면 내가 거기에 있는 모든 내용을 직접 .env.local 파일에 붙여넣을거야. 

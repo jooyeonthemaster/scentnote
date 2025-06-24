@@ -31,7 +31,8 @@ export interface Fragrance {
   price?: {
     amount: number;
     currency: string;
-  };
+  } | string; // string 타입도 허용 (Brave Search 결과용)
+  purchaseLinks?: string[]; // 구매 링크 추가
 }
 
 // 사용자 향수 피드백 타입
@@ -66,6 +67,7 @@ export interface FragranceAnalysis {
     style: 'classic' | 'modern' | 'bold' | 'minimalist' | 'romantic';
     intensity: 'light' | 'moderate' | 'strong';
     complexity: 'simple' | 'complex';
+    budget?: string;
   };
   recommendations: FragranceRecommendation[];
   confidence: number; // 0-1
@@ -79,4 +81,10 @@ export interface FragranceRecommendation {
   reasoning: string;
   matchedPreferences: string[];
   potentialConcerns?: string[];
+  searchMetadata?: {
+    searchResults: string;
+    verificationStatus: 'verified' | 'pending' | 'error';
+    priceRange: string;
+    availablePurchaseLinks: number;
+  };
 } 

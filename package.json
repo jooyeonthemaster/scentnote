@@ -18,11 +18,17 @@
   "license": "ISC",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "@mendable/firecrawl-js": "^1.26.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "fake-useragent": "^1.0.1",
     "firebase": "^11.1.0",
     "lucide-react": "^0.468.0",
     "next": "^15.3.3",
+    "node-fetch": "^3.3.2",
+    "playwright": "^1.53.1",
+    "playwright-extra": "^4.3.6",
+    "playwright-extra-plugin-stealth": "^0.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^5.0.2"

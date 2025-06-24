@@ -427,7 +427,10 @@ export default function AnalysisPage() {
                     </span>
                     {recommendation.fragrance.price && (
                       <span className="lab-text text-xs">
-                        ₩{recommendation.fragrance.price.amount.toLocaleString()}
+                        {typeof recommendation.fragrance.price === 'string' 
+                          ? recommendation.fragrance.price 
+                          : `₩${recommendation.fragrance.price.amount.toLocaleString()}`
+                        }
                       </span>
                     )}
                   </div>

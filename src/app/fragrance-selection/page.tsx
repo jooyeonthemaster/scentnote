@@ -139,7 +139,10 @@ export default function FragranceSelectionPage() {
                     </span>
                     {fragrance.price && (
                       <span className="lab-text text-xs">
-                        ₩{fragrance.price.amount.toLocaleString()}
+                        {typeof fragrance.price === 'string' 
+                          ? fragrance.price 
+                          : `₩${fragrance.price.amount.toLocaleString()}`
+                        }
                       </span>
                     )}
                   </div>
