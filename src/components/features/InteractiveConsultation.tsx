@@ -8,6 +8,7 @@ import { AnalysisProgress } from './AnalysisProgress';
 import { AnalysisLogs, LogDetailModal } from './AnalysisLogs';
 import { RecommendationResults } from './RecommendationResults';
 import { parseAnalysisLogs, generateAutoLogs } from '@/utils/log-parser';
+import { trackConsultationStart, trackChatMessage, trackRecommendationComplete } from '@/lib/analytics';
 
 interface InteractiveConsultationProps {
   onStartChat: () => void;
@@ -61,6 +62,9 @@ export function InteractiveConsultation({ onStartChat }: InteractiveConsultation
     const message = inputValue.trim();
     setInputValue('');
     
+    // 사용자 메시지 전송 이벤트 트래킹
+    trackChatMessage('user', conversationState.stage);
+    
     try {
       await sendMessage(message);
     } catch (error) {
@@ -70,6 +74,10 @@ export function InteractiveConsultation({ onStartChat }: InteractiveConsultation
 
   const handleStartChat = async () => {
     setIsStarting(true);
+    
+    // 향수 상담 시작 이벤트 트래킹
+    trackConsultationStart();
+    
     try {
       await onStartChat();
     } finally {
@@ -84,6 +92,8 @@ export function InteractiveConsultation({ onStartChat }: InteractiveConsultation
   useEffect(() => {
     if (shouldShowRecommendations) {
       forceCompleteProgress();
+      // 향수 추천 완료 이벤트 트래킹
+      trackRecommendationComplete(3);
     }
   }, [shouldShowRecommendations, forceCompleteProgress]);
 

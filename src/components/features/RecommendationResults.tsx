@@ -1,11 +1,22 @@
 import React from 'react';
 import { Star, ShoppingBag, Sparkles, Clock, Heart, ExternalLink } from 'lucide-react';
 import { parseRecommendationResponse, getMatchingScoreColor, getMatchingScoreBgColor, type RecommendationItem, type AnalysisResult } from '@/utils/recommendation-parser';
+import { trackPurchaseLinkClick, trackFragranceClick } from '@/lib/analytics';
 
 // 향수 구매 링크 생성 함수 (구글 검색으로 변경)
 function generatePurchaseLink(brand: string, name: string): string {
   const searchQuery = `${brand} ${name} 향수`.trim();
   return `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+}
+
+// 구매 링크 클릭 핸들러
+function handlePurchaseLinkClick(brand: string, name: string) {
+  trackPurchaseLinkClick(brand, name, 'google_search');
+}
+
+// 향수 상세 클릭 핸들러  
+function handleFragranceClick(brand: string, name: string) {
+  trackFragranceClick(brand, name);
 }
 
 interface RecommendationResultsProps {
@@ -216,6 +227,7 @@ function RecommendationCard({ item, rank }: { item: RecommendationItem; rank: nu
           target="_blank"
           rel="noopener noreferrer"
           className="w-full bg-mono-800 hover:bg-mono-900 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+          onClick={() => handlePurchaseLinkClick(item.brand, item.name)}
         >
           <ShoppingBag className="w-5 h-5" />
           {item.purchaseLink && item.purchaseLink.startsWith('http') ? '구매하기' : '검색하기'}
